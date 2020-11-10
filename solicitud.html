@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body id="main" >
+   
+
+     <div class="sidenav">
+         <div class="login-main-text" id= "div1">
+            <h2>USAC Music Estation<br> Solicitudes</h2>
+            <p></p>
+            <h1><a id= "logeado" ></a></h1>
+         </div>
+         <div class="login-main-text"> 
+            <li><button class="btn" onclick="Regresar()"><i class="fa fa-home" ></i>Regresar</button></li>      
+        </div>
+     </div>
+     <div class="main" id ="div2">
+        <div class="caja">Llenar el Siguiente "formulario"</div>
+        <form>
+            <div class="form-group">
+               <label>Nombre</label>
+               <input id = "Nombre" type="text" class="form-control" >
+            </div>
+            <div class="form-group">
+              <label>Artista</label>
+              <input id = "artista" type="text" class="form-control" >
+           </div>
+           
+           <div class="form-group">
+              <label>Album</label>
+              <input id = "Album" type="text" class="form-control" >
+           </div>
+            <div class="form-group">
+               <label>Fecha</label>
+               <input id = "Fecha" class="form-control"   type="text">
+            </div>
+            <div class="form-group">
+                <label>Link Spotify</label>
+                <input  id = "ls" class="form-control"   type="text">
+             </div>
+             <div class="form-group">
+                <label>Link YouTube</label>
+                <input id = "ly"   class="form-control"   type="text">
+             </div>        
+             <div class="form-group">
+                <label>Direccion de imagen</label>
+                <input  id = "di" class="form-control"   type="text">
+             </div>                 
+             <button class="btn" onclick = "Enviar()"><i style='font-size:24px' class='fab'>&#xf3b5;</i><span > Enviar Solicitud</span></button>                   
+        
+         </form>
+          
+     </div>
+    
+  <script>
+      function Regresar(){
+        window.history.back();
+      }
+
+
+      function Enviar(){
+          var nombre = document.querySelector('#Nombre').value
+          var album = document.querySelector('#Album').value
+          var artista = document.querySelector('#artista').value 
+          var fecha = document.querySelector('#Fecha').value
+          var spoti = document.querySelector('#ls').value
+          var youtube = document.querySelector('#ly').value
+          var imagen = document.querySelector('#di').value 
+
+          var objeto = {
+           'nombre' : nombre, 
+           'album' : album, 
+           'artista' : artista, 
+           'fecha' : fecha, 
+           'imagen'  : imagen,
+           'spoti' : spoti,
+           'youtube' : youtube
+          }
+          console.log(objeto)
+          fetch('http://localhost:3000/Solicitud', {
+            method : 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .catch(
+            error => {
+            console.error('Error:', error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+            })
+           .then(response => {
+               console.log('Succes',response)
+               alert(response.message)
+           })
+
+      }
+
+     
+  </script>
+</body>
+</html>

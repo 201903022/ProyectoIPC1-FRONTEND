@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="CargarInfo()" id="main">
+
+     <div class="sidenav">
+         <div class="login-main-text">
+            
+            <h2>USAC Music Estation<br> Listado de Solicitudes</h2>
+            <p>Pagina Principal.</p>
+            <h1><a id= "logeado" style="background-color:powderblue" ></a></h1>
+         </div>
+         <div class="login-main-text" id ="div1">
+            <li><button class="btn" onclick="Principal()"><i class="fa fa-home"></i>Pagina Principal</button></li>
+
+        </div>
+     </div>
+     <div class="main" id="divcito">
+         <div id="si">
+
+
+         </div>
+    
+          
+     </div>
+    
+
+  <script>
+
+      function CargarInfo(){
+          var nombre = document.querySelector('#logeado')
+          var iniciado = sessionStorage.usuario
+          nombre.innerHTML = `Usuario: </br> ${iniciado}` 
+          var div = document.querySelector('#divcito')
+          var div1 = document.querySelector('#div1')
+          div.innerHTML =  `
+                <h1>Solicitudes </h1>`
+          fetch('http://localhost:3000/SolicitudM')
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+            for (var i in res) {
+                console.log(res[i])
+                div.innerHTML += `
+                <h1>Cancion: </h1>
+                <div class="polaroid">
+              <iframe src="${res[i].spoti}"   frameborder="0" allowtransparency="true" style="width:100%; height: 100%;"  allow="encrypted-media"></iframe>
+             <div class="cancion">
+           <p>${res[i].nombre}</p>
+           <p>${res[i].artista}</p>
+           <button  type="button" value="${res[i].id}" onclick="Aceptar(this)" style="font-size:20px;color:green"><i class="fa fa-edit">Ver </i></button>
+           </div>
+           </div> `
+            }
+            div1.innerHTML+=`   <br>
+
+
+                   <li><button class="btn" value="${iniciado}" onclick = "verPerfil(this)"><i style='font-size:15px' class='fas'>&#xf0c0;</i><span >  Mi Perfil</span></button></li> 
+                   `
+           
+            })  
+      }
+
+
+      function Canciones(){
+          location.href="CancionesC.html"
+      }
+      function Aceptar(boton){
+        var iniciado = sessionStorage.usuario
+          var cancionb = boton.value
+          sessionStorage.setItem("buscarC", cancionb)
+          sessionStorage.setItem("buscarP", iniciado)
+          location.href="infoSolicitudes.html"
+      } 
+      function verPerfil(boton){
+          var usuariob = boton.value
+          sessionStorage.setItem("buscarP", usuariob)
+          location.href="miPerfil.html"
+          
+      }
+      function Principal(){
+          alert("Esta la Pagina Principal")
+      }
+      function verPlaylist(boton){
+          var id = boton.value
+          sessionStorage.setItem("buscarId", id)
+          location.href="playlist.html"
+          
+      }   
+
+      </script>
+     
+      
+</body>
+</html>

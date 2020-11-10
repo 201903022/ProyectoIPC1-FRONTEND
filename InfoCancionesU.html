@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="estiloR.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="MostrarC()" id="main" >
+   
+
+     <div class="sidenav">
+         <div class="login-main-text" id= "div1">
+            <h2>USAC Music Estation<br> Canciones</h2>
+            <p></p>
+            <h1><a id= "logeado" ></a></h1>
+         </div>
+         <div class="login-main-text"> 
+            <li><button class="btn" onclick="Regresar()"><i class="fa fa-home" ></i>Regresar</button></li>
+
+           
+        </div>
+     </div>
+     <div class="main" id ="div2">
+        <div class="caja">Informacion de la cancion</div>
+        <form>
+            <div class="form-group">
+               <label>Nombre</label>
+               <input id = "Nombre" type="text" class="form-control" disabled >
+            </div>
+            <div class="form-group">
+              <label>Artista</label>
+              <input id = "artista" type="text" class="form-control"disabled >
+           </div>
+           
+           <div class="form-group" >
+              <label>Album</label>
+              <input id = "Album" type="text" class="form-control" disabled>
+           </div>
+            <div class="form-group">
+               <label>Fecha</label>
+               <input  class="form-control" id = "Fecha" disabled>
+            </div>
+                           
+           
+           
+         </form>
+          
+     </div>
+    
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+      function Regresar(){
+        window.history.back();
+      }
+
+
+
+    function MostrarC(){
+          var body1 = document.getElementById("main")
+          var nombreU = document.querySelector('#logeado')
+          var cancionB = sessionStorage.buscarC
+          var cuerpo = document.querySelector('#cuerpoComentarios')
+          //nombreU.innerHTML = `Cancion Buscada: </br> ${cancionB}` 
+         var image = document.querySelector('#image')
+         var musica = document.querySelector('#musica')
+         var div = document.getElementById("div1")
+         var div2 = document.getElementById("div2")
+         
+            fetch(`http://localhost:3000/CancionesG/${cancionB}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              console.log(res.nombre)
+              nombreU.innerHTML += `Cancion Buscada: </br> ID: ${cancionB}</br>  Nombre:${res.nombre} ` 
+              div1.innerHTML += ` </br> <img class="circular--square"  style="width:100%;"src = "${res.imagen}" id="image" /> ` 
+              div2.innerHTML += `  <iframe src= "${res.spoti}" width="100%" height="100" frameborder="0" allowtransparency="true" allow="encrypted-media"  ></iframe> 
+              <br>   <iframe width="100%" height="345" src="${res.youtube}"> </iframe>
+                   
+              `  
+              div2.innerHTML += `   <br><button onclick="AgregarP()" type="button" class="btn btn-secondary">Agregar al PlayList</button>`      
+              div2.innerHTML += ` <br>
+              <h2> Espacio para comentar</h2>
+              <input  class="form-control" id = "comentarS" >
+                <br><button onclick="Comentar()" type="button" class="btn btn-secondary">Comentar</button>
+                <br> <h2> Comentarios</h2> <button onclick="verCom(this)" value="${res.id}"type="button" class="btn btn-secondary">Ver Comentarios</button>
+                <table >
+                <tr>
+                  <th>Nombre</th>
+                  <th>Comentario</th>
+
+                </tr>
+                <tbody id="cuerpoComentarios">
+                   
+                </tbody>
+       
+              </table>
+                `          
+              document.querySelector('#Nombre').value = res.nombre
+              document.querySelector('#Album').value = res.album
+              document.querySelector('#Fecha').value = res.fecha
+              document.querySelector('#artista').value = res.artista
+
+            })
+            
+            cuerpo.innerHTML = ""
+            fetch(`http://localhost:3000/Comentarios/${cancionB}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              for (var i in res) {
+                console.log(res[i].username)
+                console.log(res[i].comentario)
+                  cuerpo.innerHTML +=
+                  ` 
+                  <tr>
+                 <td>${res[i].username} </td>
+                 <td>${res[i].comentario} </td>
+                 </tr>
+                
+                  ` 
+              }
+
+
+            }) 
+
+      }
+
+    async function Comentar(){
+        var cancionB = sessionStorage.buscarC
+        var username = sessionStorage.buscarP
+        var comentario = document.querySelector('#comentarS').value
+        var nombre 
+        var apellido 
+        //Obtener nombre de la persona a comentar
+
+        await fetch(`http://localhost:3000/Personas2/${username}`)
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+            nombre = res.nombre
+            apellido = res.apellido
+            console.log(nombre + " Fech")
+          })    
+          var nombreC = nombre + "" + apellido
+          var objeto = {
+            'username' : nombreC, 
+            'comentario': comentario, 
+            'id': cancionB
+        }
+        console.log(objeto)
+        console.log("nombre " + nombre)
+       //Comentar
+        fetch(`http://localhost:3000/Comentar`, {
+            method : 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .catch(
+            error => {
+            console.error('Error:', error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+            })
+           .then(response => {
+               console.log('Succes',response)
+               console.log(response.comentario)
+               alert(response.message)
+
+               location.reload();            
+           })
+
+        alert("listo")
+        document.querySelector('#comentarS').value = ""
+    }
+    function verCom(boton){
+        var cancionb = boton.value
+          sessionStorage.setItem("buscarC", cancionb)
+          location.href="comentarios.html"
+    }
+
+    /////
+    async function AgregarP(){
+      var idU
+      var id = sessionStorage.buscarC
+      var username = sessionStorage.buscarP
+      var nombre
+      var artista
+      var album 
+      var fecha 
+      var imagen 
+      var spoti
+      var you       
+ 
+      await fetch(`http://localhost:3000/Personas2/${username}`)
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+            console.log("ID usuario"  + idU)
+            idU = res.id
+          })    
+    
+      await fetch(`http://localhost:3000/CancionesG/${id}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              console.log(res.nombre)
+              nombre = res.nombre 
+              artista = res.artista
+              album = res.album 
+              fecha = res.fecha
+              imagen = res.imagen
+              spoti = res.spoti
+              you = res.youtube
+              })
+              var objeto = {
+      'id' : id, 
+      'username' : idU, 
+      'nombre' : nombre, 
+      'artista' : artista, 
+      'album' : album,
+      'fecha' :fecha, 
+      'imagen' : imagen,
+      'spoti' : spoti, 
+      'youtube' : you
+      
+    }
+    console.log(objeto)
+    fetch(`http://localhost:3000/PlayList`, {
+            method : 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .catch(
+            error => {
+            console.error('Error:', error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+            })
+           .then(response => {
+               if(response.message = "Failed"){
+                 alert(response.reason)
+               }
+               else{alert(response.reason)}
+           })
+    }
+ 
+
+  </script>
+</body>
+</html>

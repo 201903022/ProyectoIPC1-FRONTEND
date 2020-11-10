@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="estilo1.css">    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <title>Registrarse</title>
+  </head>
+
+
+ 
+  <body>
+   <form>
+      <div class="sidenav">
+         <div class="login-main-text">
+            <h2>USAC Music E  station<br> Login Page</h2>
+            <p>Registrar desde aqui para acceder.</p>
+         </div>
+      </div>
+      <div class="main">
+         <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+               <form>
+                  <div class="form-group">
+                     <label>Nombre</label>
+                     <input id = "Nombre" type="text" class="form-control" placeholder="Nombre">
+                  </div>
+                  <div class="form-group">
+                    <label>Apellido</label>
+                    <input id = "Apellido" type="text" class="form-control" placeholder="Apellido">
+                 </div>
+                 
+                 <div class="form-group">
+                    <label>Username</label>
+                    <input id = "Username" type="text" class="form-control" placeholder="Username">
+                 </div>
+                  <div class="form-group">
+                     <label>Password</label>
+                     <input type="password" class="form-control" placeholder="Password" id = "password">
+                  </div>
+                  <div class="form-group">
+                   <label>Password</label>
+                   <input type="password" class="form-control" placeholder="Confiram Contraseña" id = "password2">
+                </div>
+                  <button onclick="Registrar()" type="button" class="btn btn-black">Registrar</button>
+                  <button onclick="Regresar()" type="button" class="btn btn-secondary">Regresar</button>
+               </form>
+            </div>
+         </div>
+      </div>
+   </form>
+
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+ <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>  
+ <script>
+  function Registrar(){
+    var nombre = document.querySelector('#Nombre').value
+    var Apellido = document.querySelector('#Apellido').value
+    var username = document.querySelector('#Username').value
+    var password = document.querySelector('#password').value
+    var password2 = document.querySelector('#password2').value
+    var objeto = {
+        'username': username,
+        'password': password,
+        'nombre': nombre,
+        'apellido': Apellido,
+    }
+    console.log(objeto)
+    if (password == password2){
+      fetch('http://localhost:3000/Registrar', {
+    method: 'POST', 
+    body: JSON.stringify(objeto), 
+    headers:{
+        'Content-Type': 'application/json'
+    }
+
+    }).then(res => res.json())
+    .catch(err => {
+      console.error('Error:', err)
+      alert("Ocurrio un error al consumir la api, ver la consola")
+    })
+    .then(response =>{
+    console.log('Succes',response);
+    console.log(response.message)
+    if(response.message == "Failed"){
+        alert("El usuario ya esta registrado")
+        alert(response.message)
+        document.querySelector('#Username').value = ""
+    }else{
+        alert(response.reason)
+        alert(`Credenciales correctas, bienvenido ${username}`)
+        location.href="InicioSesion.html"
+    }
+    }) 
+    }
+     else {
+      alert("Revisar Contraseñas no coinciden")
+      document.querySelector('#password').value = ""
+      document.querySelector('#password2').value = ""
+
+    }
+
+  }
+
+  function Regresar(){
+            location.href="InicioSesion.html"
+        }
+ </script>
+  </body>
+ 
+</html>   

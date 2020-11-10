@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <link href="estiloR.css" rel="stylesheet" >
+    <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'>
+
+
+    <title>Recuperar Password</title>
+ </head>
+ <body>
+     <form>
+        <div class="container padding-bottom-3x mb-2 mt-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="forgot">
+                        <h2>¿Olvidaste tu contraseña?</h2>
+                        <p>Recupera tu contraseña. </p>
+                        <ol class="list-unstyled">
+                            <li><span class="text-primary text-medium">1. </span>Ingresa tu nombre de usuario.</li>
+                            <li><span class="text-primary text-medium">2. </span>Dar click a Recuperar.</li>
+                            <li><span class="text-primary text-medium">3. </span>Aparecera en una ventana flotante.</li>
+                        </ol>
+                    </div>
+                    <form class="card mt-4">
+                        <div class="card-body">
+                            <div class="form-group"> <label for="email-for-pass">Ingresa tu "username"</label> <input class="form-control" type="text" id="username" required=""><small class="form-text text-muted">Ingresar correctamente el username, o no se podra recuperar contraseña-</small> </div>
+                        </div>
+                        <div class="card-footer"> <button onclick="Recuperar()" class="btn btn-success" type="button">Recuperar</button> <button onclick="BackL()" class="btn btn-danger" type="button">Regresar al Login</button> </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+     </form> 
+     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js'></script>
+     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+     <script>
+         function Recuperar(){
+         var username = document.querySelector('#username').value
+          var objeto = {
+            'username': username
+          }      
+          console.log(objeto)
+          fetch('http://localhost:3000/RecuperarPassword/'+username, {
+          method: 'GET', 
+           })//termina fletch toca then
+           .then(res => res.json())
+           .catch(err => {
+            console.error('Error:', err)
+            alert("Ocurrio un error, ver la consola")
+           }).then(response =>{
+            console.log('Succes',response);
+            console.log(response.message)
+            console.log(username)
+            if(response.message == "Failed"){
+                alert("El usuario no se encontro")
+                alert(response.message)
+            }else{
+                alert(response.reason)
+                alert(`Usuario correcto,  ${username} , su contraseña es ${response.password}`)
+                location.href="InicioSesion.html"
+            }
+           }) 
+
+
+         } //cierrre de Recuperar()
+         function BackL(){
+        location.href="InicioSesion.html"
+        }       
+
+
+     </script>
+ </body>
+
+
+</html> 

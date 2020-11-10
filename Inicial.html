@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <script src = "https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"> </script>
+  <script src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js" > </script>
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="CargarInfo()" id="main">
+
+     <div class="sidenav">
+         <div class="login-main-text">
+            <img class="circular--square" src="logoU.png" />
+            <h2>USAC Music Estation<br> Pagina Inicial</h2>
+            <p>Pagina Principal.</p>
+            <h1 style="background-color:powderblue;" id= "logeado" ></h1>
+         </div>
+         <div class="login-main-text" id= "div1">
+            <li><button class="btn"><i class="fa fa-home"></i>Pagina Principal</button></li>
+
+           <br>          
+           <li><a href="CancionesA.html"><button class="btn"><i style='font-size:24px' class='fab'>&#xf3b5;</i><span onclick="Canciones()"> Canciones</span></button></a></li>
+
+        </div>
+     </div>
+     <div class="main">
+        <div class="caja">Listado de Usuarios</div>
+        <button class="btn" onclick="genPDF()"><i class="fa fa-folder"></i> Reporte</button>
+        <table id="customers">
+            <tr>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Usuario</th>
+              <th>Acciones</th>
+            </tr>
+            <tbody id="CuerpoUsuarios">
+               
+            </tbody>
+   
+          </table>
+          
+     </div>
+    
+
+  <script>
+
+      function CargarInfo(){
+          var nombre = document.querySelector('#logeado')
+          var iniciado = sessionStorage.usuario
+          var div = document.getElementById("div1")
+          nombre.innerHTML = `Bienvenido: </br> ${iniciado}` 
+          var tabla = document.querySelector('#CuerpoUsuarios')
+          fetch('http://localhost:3000/Personas')
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+
+            for (var i in res) {
+
+                tabla.innerHTML += 
+                `<tr>
+                <td>  ${res[i].nombre} </td>
+                <td>  ${res[i].apellido} </td>
+                <td>  ${res[i].username} </td>
+                <td> <button  type="button" value="${res[i].username}" onclick="verUsuario(this)" style="font-size:20px;color:green"><i class="fa fa-edit">Editar </i></button> </td>
+                </tr>`
+            }
+            div.innerHTML+=`   <br>
+                   <li><button class="btn" value="${iniciado}" onclick = "verPerfil(this)"><i style='font-size:15px' class='fas'>&#xf0c0;</i><span >  Mi Perfil</span></button></li> 
+                   
+                 
+                   `
+            fetch('http://localhost:3000/SolicitudM')
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+            for (var i in res) {
+                console.log(res[i])
+            }
+            console.log("total S: " + res.total)
+            div1.innerHTML+=`   <br>
+
+
+                   <li>
+                    <a href="solicitudes.html" class="notification">
+                   <span>Inbox</span>
+                   <span class="badge">${res.total}</span>
+                   </a>
+                    </li> 
+                   `
+           
+            })                    
+          })
+      }
+
+
+      function verUsuario(boton){
+          var usuariob = boton.value
+          sessionStorage.setItem("buscar", usuariob)
+          location.href="Perfil.html"
+      }
+
+      function Canciones(){
+          location.href="Canciones.html"
+      }
+      function verPerfil(boton){
+          var usuariob = boton.value
+          sessionStorage.setItem("buscarP", usuariob)
+          location.href="miPerfil.html"
+          
+      }
+     async function genPDF(){
+        
+       var  pdf = new jsPDF();
+        pdf.text(20,20,"PDF SOBRE USUARIOS REGISTRADOS");
+        var columns = ["Id", "Nombre", "Apellido", "Usuario"];
+        var data 
+        var insidedata = ""
+        await fetch('http://localhost:3000/Personas')
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+              for (var i in res) {
+                insidedata += [res[i].id,res[i].nombre,res[i].apellido,res[i].username]+","
+           }        
+          })    
+          data = [insidedata]
+          console.log(data)
+
+          pdf.autoTable(columns,data,
+          { margin:{ top: 25 }}
+           );   
+           pdf.save(mipdf.pdf);
+           alert("Se genero el pdf")
+      }
+
+      function verPlaylist(boton){
+          var id = boton.value
+          sessionStorage.setItem("buscarId", id)
+          location.href="playlist.html"
+          
+      }   
+  </script>
+</body>
+</html>

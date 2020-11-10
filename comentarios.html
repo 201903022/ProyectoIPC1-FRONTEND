@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="MostrarC()" id="main" >
+   
+
+     <div class="sidenav">
+         <div class="login-main-text" id= "div1">
+            <h2>USAC Music Estation<br> Comentarios</h2>
+            <p></p>
+            <h1><a id= "logeado" ></a></h1>
+         </div>
+         <div class="login-main-text"> 
+            <li><button class="btn" onclick="Regresar()"><i class="fa fa-home" ></i>Regresar</button></li>      
+        </div>
+     </div>
+     <div class="main" id ="div2">
+        <div class="caja">Comentarios de la Cancion</div>
+        <form>
+            <div class="form-group">
+               <label>Nombre</label>
+               <input id = "Nombre" type="text" class="form-control" disabled >
+                           
+               <table id="customers">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Comentario</th>
+
+                </tr>
+                <tbody id="CuerpoCanciones">
+                   
+                </tbody>
+       
+              </table>
+          </tbody>
+        </table >
+         </form>
+          
+     </div>
+    
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+      function Regresar(){
+        window.history.back();
+      }
+
+
+
+    function MostrarC(){
+          var body1 = document.getElementById("main")
+          var nombreU = document.querySelector('#logeado')
+          var cancionB = sessionStorage.buscarC
+          var cuerpo = document.querySelector('#CuerpoCanciones')
+            cuerpo.innerHTML = ""  
+          //nombreU.innerHTML = `Cancion Buscada: </br> ${cancionB}` 
+         var image = document.querySelector('#image')
+         var musica = document.querySelector('#musica')
+         var div = document.getElementById("div1")
+         var div2 = document.getElementById("div2")
+         
+            fetch(`http://localhost:3000/CancionesG/${cancionB}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              console.log(res.nombre)
+              nombreU.innerHTML += `Cancion Buscada: </br> ID: ${cancionB}</br>  Nombre:${res.nombre} ` 
+              div1.innerHTML += ` </br> <img class="circular--square"  style="width:100%;"src = "${res.imagen}" id="image" /> ` 
+    
+              document.querySelector('#Nombre').value = res.nombre
+            })
+            fetch(`http://localhost:3000/Comentarios/${cancionB}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              for (var i in res) {
+                console.log(res[i].username)
+                console.log(res[i].comentario)
+                  cuerpo.innerHTML +=
+                  ` 
+                  <tr>
+                 <td>${res[i].username} </td>
+                 <td>${res[i].comentario} </td>
+                 </tr>
+                
+                  ` 
+              }
+
+
+            })       
+
+      }
+
+    async function Comentar(){
+        var cancionB = sessionStorage.buscarC
+        var username = sessionStorage.buscarP
+        var comentario = document.querySelector('#comentarS').value
+        var nombre 
+        //Obtener nombre de la persona a comentar
+
+        await fetch(`http://localhost:3000/Personas2/${username}`)
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+            nombre = res.nombre
+            console.log(nombre + " Fech")
+          })    
+           
+          var objeto = {
+            'username' : nombre, 
+            'comentario': comentario, 
+            'id': cancionB
+        }
+        console.log(objeto)
+        console.log("nombre " + nombre)
+       //Comentar
+        fetch(`http://localhost:3000/Comentar`, {
+            method : 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .catch(
+            error => {
+            console.error('Error:', error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+            })
+           .then(response => {
+               console.log('Succes',response)
+               console.log(response.comentario)
+               alert(response.message)
+
+               location.reload();            
+           })
+
+        alert("listo")
+        document.querySelector('#comentarS').value = ""
+    }
+    function verCom(){
+        var div2 = document.getElementById("div2")
+        var cancionB = sessionStorage.buscarC
+        var cuerpo = document.querySelector('#cuerpoComentarios')
+        cuerpo = ""       
+
+    }
+  </script>
+</body>
+</html>

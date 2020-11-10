@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="MostrarC()" id="main">
+
+     <div class="sidenav">
+         <div class="login-main-text">
+            <img class="circular--square" src="mr.png" />
+            <h2>USAC Music Estation<br> Canciones</h2>
+            <p></p>
+            <h1 id= "logeado"></h1>
+         </div>
+         <div class="login-main-text"> 
+            <li><button class="btn " onclick="Regresar()"><i class="fa fa-home" ></i>Regresar</button></li>
+            <br>           
+           <li><button class="btn"><i style='font-size:24px' class='fab'>&#xf3b5;</i><span onclick="cargarArchivo()"> Agregar</span></button></li>
+           <li> <input type="file" id="file"/></li>
+           
+        </div>
+     </div>
+     <div class="main">
+        <div class="caja">Listado de Canciones</div>
+        <button class="btn"><i class="fa fa-folder"></i> Reporte</button>
+        <table id="customers">
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Artista</th>
+              <th>Album</th>
+              <th>Fecha</th>
+              <th>Play</th>
+              <th>Acciones</th>
+
+            </tr>
+            <tbody id="CuerpoCanciones">
+               
+            </tbody>
+   
+          </table>
+          
+     </div>
+    
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> 
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+      function Regresar(){
+        window.history.back();
+      }
+      function cargarArchivo(){
+        $('#file').parse({
+      		config: {
+			     delimiter: ";",
+			     complete: GuardarCanciones,
+		      },
+      		before: function(file, inputElem)
+      		{
+      			console.log("Parsing file...", file);
+      		},
+      		error: function(err, file)
+      		{
+      			console.log("ERROR:", err, file);
+              },
+                            
+              
+              complete: function()
+      		{
+            console.log("Done with all files");
+          }
+        });
+      }
+
+
+      async function GuardarCanciones(results) {
+        console.log(results.data)
+        var data = results.data;
+        var val = true
+        for (i = 0; i < data.length; i++) {
+            var nombre = data[i][0]
+            var artista = data[i][1]
+            var album = data[i][2]
+            var fecha = data[i][3]
+            var imagen = data[i][4]
+            var spotify = data[i][5]
+            var youtube = data[i][6]
+            var objeto = {
+                'nombre': nombre,
+                'artista': artista,
+                'album': album,
+                'fecha': fecha,
+                'imagen': imagen,
+                'spoti': spotify,
+                'youtube': youtube       
+             }
+            console.log(objeto)
+            fetch('http://localhost:3000/Cancion', {
+            method: 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+            }).then(res => res.json())
+            .catch(error => {
+                console.error('Error:', error)
+                alert("Ocurrio un error al consumir la API, revise la consola")
+                val = false
+            })
+            .then(response =>{
+                console.log('Success:', response);
+            }) 
+            }
+            if(val = true)
+            {
+                alert("Se agregaron las canciones exitosamente")
+    			      MostrarC()
+            }
+    }
+    function MostrarC(){
+          var nombreU = document.querySelector('#logeado')
+          var iniciado = sessionStorage.usuario
+          nombreU.innerHTML = `Bienvenido: </br> ${iniciado}` 
+         var contenido = document.querySelector('#CuerpoCanciones') 
+            contenido.innerHTML = ""
+            fetch('http://localhost:3000/CancionesM')
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+            for (var i in res) {
+                console.log(res[i])
+                contenido.innerHTML += 
+                `<tr>
+                <td><img src="${res[i].imagen}"  class="imagencita" > </td>                   
+                <td>${res[i].nombre}  </td>
+                <td>${res[i].artista} </td>
+                <td>${res[i].album}   </td>
+                <td>${res[i].fecha}    </td>
+                <td><iframe src="${res[i].spoti}" width="350" height="430" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe></th>
+                <td> <button  type="button" value="${res[i].id}" onclick="verCancion(this)" style="font-size:20px;color:green"><i class="fa fa-edit">Editar </i></button>
+                  <button onclick="AgregarP()" type="button" class="btn btn-secondary">Agregar al PlayList</button> </td>
+                </tr>`
+
+            }
+            })
+      }
+      function verCancion(boton){
+          var cancionb = boton.value
+          sessionStorage.setItem("buscarC", cancionb)
+          location.href="InfoCancion.html"
+      }
+      async function AgregarP(){
+      var idU
+      var id = sessionStorage.buscarC
+      var username = sessionStorage.buscarP
+      var nombre
+      var artista
+      var album 
+      var fecha 
+      var imagen 
+      var spoti
+      var you       
+ 
+      await fetch(`http://localhost:3000/Personas2/${username}`)
+          .then(response => response.json())
+          .catch(error => {
+            console.log(error)
+          })
+          .then(res => {
+            console.log("ID usuario "  + idU)
+            idU = res.id
+          })    
+    
+      await fetch(`http://localhost:3000/CancionesG/${id}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+              console.log(res.nombre)
+              nombre = res.nombre 
+              artista = res.artista
+              album = res.album 
+              fecha = res.fecha
+              imagen = res.imagen
+              spoti = res.spoti
+              you = res.youtube
+              })
+              var objeto = {
+      'id' : id, 
+      'username' : idU, 
+      'nombre' : nombre, 
+      'artista' : artista, 
+      'album' : album,
+      'fecha' :fecha, 
+      'imagen' : imagen,
+      'spoti' : spoti, 
+      'youtube' : you
+      
+    }
+    console.log(objeto)
+    fetch(`http://localhost:3000/PlayList`, {
+            method : 'POST',
+            body: JSON.stringify(objeto),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          }).then(res => res.json())
+          .catch(
+            error => {
+            console.error('Error:', error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+            })
+           .then(response => {
+               if(response.message = "Failed"){
+                 alert(response.reason)
+               }
+               else{alert(response.reason)}
+           })
+    }
+ 
+ 
+  </script>
+</body>
+</html>

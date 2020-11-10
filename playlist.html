@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Music Station </title>
+</head>
+
+  <header>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  
+  <link href="estilo2.css" rel="stylesheet" >
+
+  </header>
+
+  <body onload="CargarInfo()" id="main">
+
+     <div class="sidenav">
+         <div class="login-main-text">
+            
+            <h2>USAC Music Estation<br> Mi Playlist</h2>
+            <p> .</p>
+            <h1><a id= "logeado" style="background-color:powderblue" ></a></h1>
+         </div>
+         <div class="login-main-text" id ="div1">
+            <li><button class="btn" onclick="Principal()"><i class="fa fa-home"></i>Pagina Principal</button></li>
+        </div>
+     </div>
+     <div class="main" id="divcito">
+         <div id="si">
+
+
+         </div>
+    
+          
+     </div>
+    
+
+  <script>
+
+      function CargarInfo(){
+          var nombre = document.querySelector('#logeado')
+          var iniciado = sessionStorage.usuario
+          var id = sessionStorage.buscarId
+          nombre.innerHTML = `Playlist De: </br> ${iniciado}` 
+          var div = document.querySelector('#divcito')
+          var div1 = document.querySelector('#div1')
+
+           fetch(`http://localhost:3000/Play/${id}`)
+            .then(response => response.json())
+            .catch(error => {
+            console.log(error)
+            })
+            .then(res => {
+            for (var i in res) {
+                console.log(res[i])
+                div.innerHTML += `
+                <h1>Cancion: </h1>
+                <div class="polaroid">
+              <iframe src="${res[i].spoti}"   frameborder="0" allowtransparency="true" style="width:100%; height: 100%;"  allow="encrypted-media"></iframe>
+             <div class="cancion">
+           <p>${res[i].nombre}</p>
+           <p>${res[i].artista}</p>
+           <button  type="button" value="${res[i].id}" onclick="DeldeletePlayl(this)" style="font-size:20px;color:green"><i class="fa fa-edit">Eliminar de Mi PlayList </i></button>
+           </div>
+           </div> `
+            }
+           
+            })
+                 
+      }
+
+
+      function Canciones(){
+          location.href="CancionesC.html"
+      }
+      function verCancion(boton){
+        var iniciado = sessionStorage.usuario
+          var cancionb = boton.value
+          sessionStorage.setItem("buscarC", cancionb)
+          sessionStorage.setItem("buscarP", iniciado)
+          location.href="InfoCancionesU.html"
+      } 
+      function verPerfil(boton){
+          var usuariob = boton.value
+          sessionStorage.setItem("buscarP", usuariob)
+          location.href="miPerfil.html"
+          
+      }
+      function Principal(){
+        location.href="InicialU.html"
+      }
+      function deletePlay(boton,a){
+         var idC = a
+          var id = boton.value
+          sessionStorage.setItem("buscarId", id)
+          location.href="playlist.html"
+
+          
+      }   
+
+       function DeldeletePlayl(boton){
+        var idC = boton.value
+        var idU = sessionStorage.buscarId
+        console.log(idC)
+        var opcion = confirm("Seguro quieres eliminar este dato")
+        if (opcion == true) {
+        alert("Eliminar dato entonces")
+        fetch(`http://localhost:3000/PlayD/${idU}/${idC}`,{
+            method: 'DELETE',
+        }).then(res => res.json())
+        .catch(error=>{
+            console.error('Error' , error)
+            alert("Ocurrio un error al consumir la API, revise la consola")
+        })
+        .then(response =>{
+            console.log('Success:', response);
+            alert(response.message)
+            location.href="playlist.html"
+        })        
+	} else {
+	    alert("SALVADO")
+	}
+   
+
+      }         
+      </script>
+     
+      
+</body>
+</html>
