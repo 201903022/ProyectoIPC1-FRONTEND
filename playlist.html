@@ -47,7 +47,7 @@
           var div = document.querySelector('#divcito')
           var div1 = document.querySelector('#div1')
 
-           fetch(`http://localhost:3000/Play/${id}`)
+           fetch(`https://proyecto2201903022v2.herokuapp.com//Play/${id}`)
             .then(response => response.json())
             .catch(error => {
             console.log(error)
@@ -107,7 +107,7 @@
         var opcion = confirm("Seguro quieres eliminar este dato")
         if (opcion == true) {
         alert("Eliminar dato entonces")
-        fetch(`http://localhost:3000/PlayD/${idU}/${idC}`,{
+        fetch(`https://proyecto2201903022v2.herokuapp.com//PlayD/${idU}/${idC}`,{
             method: 'DELETE',
         }).then(res => res.json())
         .catch(error=>{

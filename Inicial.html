@@ -59,7 +59,7 @@
           var div = document.getElementById("div1")
           nombre.innerHTML = `Bienvenido: </br> ${iniciado}` 
           var tabla = document.querySelector('#CuerpoUsuarios')
-          fetch('http://localhost:3000/Personas')
+          fetch('https://proyecto2201903022v2.herokuapp.com//Personas')
           .then(response => response.json())
           .catch(error => {
             console.log(error)
@@ -81,7 +81,7 @@
                    
                  
                    `
-            fetch('http://localhost:3000/SolicitudM')
+            fetch('https://proyecto2201903022v2.herokuapp.com//SolicitudM')
             .then(response => response.json())
             .catch(error => {
             console.log(error)
@@ -129,7 +129,7 @@
         var columns = ["Id", "Nombre", "Apellido", "Usuario"];
         var data 
         var insidedata = ""
-        await fetch('http://localhost:3000/Personas')
+        await fetch('https://proyecto2201903022v2.herokuapp.com//Personas')
           .then(response => response.json())
           .catch(error => {
             console.log(error)

@@ -86,7 +86,7 @@
          var musica = document.querySelector('#musica')
          var div = document.getElementById("div1")
          var div = document.getElementById("div2")
-            fetch(`http://localhost:3000/CancionesG/${cancionB}`)
+            fetch(`https://proyecto2201903022v2.herokuapp.com//CancionesG/${cancionB}`)
             .then(response => response.json())
             .catch(error => {
             console.log(error)
@@ -130,7 +130,7 @@
 
           }
           console.log(objeto)
-          fetch(`http://localhost:3000/EditaCr/${cancionB}`, {
+          fetch(`https://proyecto2201903022v2.herokuapp.com//EditaCr/${cancionB}`, {
             method : 'PUT',
             body: JSON.stringify(objeto),
             headers:{
@@ -155,7 +155,7 @@
         var opcion = confirm("Seguro quieres eliminar este dato")
         if (opcion == true) {
         alert("Eliminar dato entonces")
-        fetch(`http://localhost:3000/CancionD/${cancionB}`,{
+        fetch(`https://proyecto2201903022v2.herokuapp.com//CancionD/${cancionB}`,{
             method: 'DELETE',
         }).then(res => res.json())
         .catch(error=>{

@@ -73,7 +73,7 @@
           var nombre = document.querySelector('#logeado')
           var cargar = sessionStorage.usuario
           nombre.innerHTML = `Usuario: </br> ${cargar}` 
-          fetch(`http://localhost:3000/Personas2/${cargar}`)
+          fetch(`https://proyecto2201903022v2.herokuapp.com//Personas2/${cargar}`)
           .then(response => response.json())
           .catch(error => {
             console.log(error)
@@ -103,7 +103,7 @@
 
           }
           console.log(objeto)
-          fetch(`http://localhost:3000/Editar/${username}`, {
+          fetch(`https://proyecto2201903022v2.herokuapp.com//Editar/${username}`, {
             method : 'PUT',
             body: JSON.stringify(objeto),
             headers:{
@@ -127,7 +127,7 @@
 
       function Delete(){
         var username = document.querySelector('#username').value
-        fetch(`http://localhost:3000/Personas1/${username}`,{
+        fetch(`https://proyecto2201903022v2.herokuapp.com//Personas1/${username}`,{
             method: 'DELETE',
         }).then(res => res.json())
         .catch(error=>{
@@ -147,7 +147,7 @@
             'usernameN' :username2,
             'usernameOld' :username
         }
-        fetch(`http://localhost:3000/EditarU/${usernameN}/${usernameOld}`,{
+        fetch(`https://proyecto2201903022v2.herokuapp.com//EditarU/${usernameN}/${usernameOld}`,{
             method : 'PUT',
             body: JSON.stringify(objeto),
             headers:{

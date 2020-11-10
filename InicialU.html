@@ -48,7 +48,7 @@
           var div1 = document.querySelector('#div1')
           div.innerHTML =  `
                 <h1>Canciones Disponiblen en nuestra Pagina </h1>`
-          fetch('http://localhost:3000/CancionesM')
+          fetch('https://proyecto2201903022v2.herokuapp.com//CancionesM')
             .then(response => response.json())
             .catch(error => {
             console.log(error)
@@ -74,7 +74,7 @@
                    `
            
             })
-            fetch(`http://localhost:3000/Personas2/${iniciado}`)
+            fetch(`https://proyecto2201903022v2.herokuapp.com//Personas2/${iniciado}`)
           .then(response => response.json())
           .catch(error => {
             console.log(error)
